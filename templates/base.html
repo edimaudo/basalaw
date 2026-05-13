@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}onllaw{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --navy: #002147; --light-gray: #F5F5F5; --gold: #D4AF37; }
+        body { font-family: 'Century Schoolbook Montserrat Lato', sans-serif; background-color: white; color: var(--navy); }
+        h1, h2, h3 { font-family: 'Century Schoolbook Montserrat Lato', sans-serif; }
+        .legal-text { font-family: 'Century Schoolbook Montserrat Lato', serif; }
+        .bg-navy { background-color: var(--navy); }
+        .btn-gold { background-color: var(--gold); color: white; transition: 0.3s; }
+        .btn-gold:hover { background-color: #B8962E; transform: translateY(-1px); }
+        .border-gold { border-color: var(--gold); }
+        /* Ensure the Gold color is defined if Tailwind misses it */
+    .bg-gold { 
+        background-color: #D4AF37 !important; 
+    }
+    
+    /* Force the button to look like a high-action element */
+    #submitBtn {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        border-radius: 4px;
+        color: #002147; /* Navy text */
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    #submitBtn:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+    }
+
+    #submitBtn:disabled {
+        background-color: #cccccc !important;
+        cursor: not-allowed;
+    }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <nav class="p-6 bg-white border-b border-gray-100 flex justify-between items-center sticky top-0 z-50">
+        <a href="/" class="text-2xl font-bold tracking-tighter text-navy flex items-center">
+            <span class="text-gold mr-1"></span> onllaw
+        </a>
+        <div class="space-x-8 font-semibold text-sm uppercase tracking-widest hidden md:flex text-navy">
+            <a href="/api/qa" class="hover:text-[var(--gold)] transition duration-300">Q&A</a>
+            <a href="/api/audit" class="hover:text-[var(--gold)] transition duration-300">Contract Review</a>
+            <a href="/api/lawyers" class="hover:text-[var(--gold)] transition duration-300">Lawyers</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-navy text-white py-12 px-6">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm opacity-70">© 2026 onllaw. Legal info only, not legal advice.</p>
+        </div>
+    </footer>
+</body>
+</html>
