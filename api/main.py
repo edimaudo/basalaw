@@ -7,6 +7,7 @@ from .utils import extract_text_from_file
 from .agents import ask_esa_lawyer
 import shutil
 import os
+import uvicorn
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -33,8 +34,6 @@ async def handle_audit(file: UploadFile = File(None), clause_text: str = Form(No
     if file and file.filename:
         file_bytes = await file.read()
         context = extract_text_from_file(file_bytes, file.filename)
-        
-        # Check for the specific error string from our updated utils.py
         if context == "ERROR_IMAGE_ONLY_PDF":
             return {
                 "answer": (
@@ -50,38 +49,31 @@ async def handle_audit(file: UploadFile = File(None), clause_text: str = Form(No
     if not context or "Unsupported" in context:
         return {"answer": "Error: No readable text was provided for analysis."}
 
-   # Specialized Review prompt
     audit_prompt = (
-        "Act as an Ontario Employment Law Expert. Audit the following text for ESA compliance.\n"
-        "1. Identify any illegal or unenforceable clauses.\n"
+        "1. Identify any illegal or unenforceable clauses. if none exist skip 2, 3 and 4\n"
         "2. Suggest specific corrections.\n"
-        "3.  If there is an illegal or unenforceable clause(s) PROVDE A DRAFT collaborative EMAIL to HR\n[Provide a collaborative email draft here]\n\n"
+        "3. If there is an illegal or unenforceable clause(s) PROVDE A DRAFT collaborative EMAIL to HR.\n[Provide a collaborative email draft here]\n\n"
         "4. If there is an illegal or unenforceable clause(s) provide a DRAFT SUMMARY FOR LAWYER\n[Provide a formal legal summary here]\n\n"
         f"CONTRACT CONTENT:\n{context}"
     )
     
-    # 3. Call the Agent
     analysis = await ask_esa_lawyer(audit_prompt)
     return {"answer": analysis}
 
 
 @app.get("/api/qa", response_class=HTMLResponse)
 async def get_qa_page(request: Request):
-    """Reasoning: This renders the UI when the user clicks the link."""
     return templates.TemplateResponse("qa.html", {"request": request})
 
 @app.post("/api/qa")
 async def handle_qa_logic(question: str = Form(...)):
-    """Reasoning: This processes the actual AI question after the user hits submit."""
     answer = await ask_esa_lawyer(question)
     return {"answer": answer}
     return response
 
 @app.get("/api/lawyers", response_class=HTMLResponse)
 async def get_lawyers_page(request: Request):
-    """
-    Serves the list of LSO Certified Specialists. 
-    """
+    # Serves the list of LSO Certified Specialists. 
     specialists = [
         {"name": "S. Margot Blight", "firm": "S. Margot Blight, Lawyer", "city": "Mississauga"},
         {"name": "David Bannon", "firm": "Hicks Morley Hamilton Stewart Storie LLP", "city": "Toronto"},
@@ -101,5 +93,4 @@ async def get_lawyers_page(request: Request):
     })
 
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
