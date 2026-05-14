@@ -12,7 +12,10 @@ def extract_pdf_text(path):
     with fitz.open(path) as doc:
         return "\n".join([page.get_text() for page in doc])
 
-full_text = extract_pdf_text("/data/00e41_e.pdf")
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
+pdf_path = os.path.join(PROJECT_ROOT, "data", "00e41_e.pdf")
+full_text = extract_pdf_text(pdf_path)
 
 
 # Gemini Model
