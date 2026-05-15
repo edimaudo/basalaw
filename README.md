@@ -1,6 +1,6 @@
 # basalaw
 
-**basalaw** is a Legal Decision Support System focused on democratizing access to employment law in Ontario by providing contract review and employment rights Q&A.  Data is from the [Ministry of Labour](https://www.ontario.ca/laws/statute/00e41)
+**basalaw** is a Legal Support System focused on democratizing access to employment law in Ontario by providing contract review and employment rights Q&A.  Data is from the [Ministry of Labour](https://www.ontario.ca/laws/statute/00e41)
 
 ## Key Features
 - **Employment Standards Q&A**: Summarized answers regarding Ontario employment rights.
