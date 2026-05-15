@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>basalaw Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --navy: #041e42; --gold: #c5a059; --light-gray: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #1e293b; }
+        
+        .slide { display: none; height: 100%; }
+        .slide.active { display: flex; flex-direction: column; animation: slideIn 0.4s ease-out; }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-nav {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-nav:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        #prevBtn {
+            background-color: #041e42;
+            color: white;
+        }
+
+        /* Unified Spacing for Content Items */
+        .content-item {
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            padding-bottom: 2rem;
+        }
+        
+        .content-item:last-child {
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:h-[600px]">
+        
+        <div class="h-1.5 w-full bg-gray-100">
+            <div id="progress" class="h-full bg-[#c5a059] transition-all duration-500" style="width: 16.66%"></div>
+        </div>
+
+        <div class="flex-1 p-8 md:p-16 flex flex-col relative">
+            
+            <div id="slide-container" class="flex-1">
+                
+                <div class="slide active" id="slide-1">
+                    <h2 class="text-6xl font-black text-[#041e42] mb-6 tracking-tight">basalaw</h2>
+                    <p class="text-2xl text-gray-600 max-w-2xl leading-relaxed">
+                        Empowering Ontario's workforce to better understand their employment contract using<span class="text-[#041e42] font-semibold"> AI</span>
+                    </p>
+                </div>
+
+                <div class="slide" id="slide-2">
+                    <h2 class="text-4xl font-black text-[#041e42] mb-10 uppercase tracking-tight">The Problem</h2>
+                    <div class="flex flex-col">
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#041e42] text-xl leading-tight mb-1">Enforceability Gaps</p>
+                                <p class="text-gray-600 text-lg leading-relaxed">Ontario employees often sign contracts containing non-compliant clauses that won't hold up in court.</p>
+                            </div>
+                        </div>
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#041e42] text-xl leading-tight mb-1">Cost Barriers</p>
+                                <p class="text-gray-600 text-lg leading-relaxed">Legal reviews typically cost $100+ CAD per hour, making them inaccessible for the average worker.</p>
+                            </div>
+                        </div>
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#041e42] text-xl leading-tight mb-1">Time Constraints</p>
+                                <p class="text-gray-600 text-lg leading-relaxed">Manual legal reviews are time-prohibitive for both the lawyer and the client.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide" id="slide-3">
+                    <h2 class="text-4xl font-black text-[#041e42] mb-10 uppercase tracking-tight">Key Features</h2>
+                    <div class="flex flex-col">
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#041e42] text-xl leading-tight mb-1">Compliance Reviews</p>
+                                <p class="text-gray-600 text-lg leading-relaxed">Legal summaries, enforceability status, and automated email drafts.</p>
+                            </div>
+                        </div>
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#041e42] text-xl leading-tight mb-1">Standards Chatbot</p>
+                                <p class="text-gray-600 text-lg leading-relaxed">Instant Q&A for complex Employment Standards questions.</p>
+                            </div>
+                        </div>
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#041e42] text-xl leading-tight mb-1">Lawyer Directory</p>
+                                <p class="text-gray-600 text-lg leading-relaxed">Curated references to Ontario employment & labour experts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide" id="slide-4">
+                    <h2 class="text-4xl font-black text-[#041e42] mb-8 uppercase tracking-tight">Demo</h2>
+                    <div class="flex-1 bg-slate-900 rounded-xl flex items-center justify-center border-4 border-slate-800 shadow-inner overflow-hidden">
+                        <div class="text-center p-10">
+                            <div class="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                            </div>
+                            <p class="text-slate-400 font-mono text-sm"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide" id="slide-5">
+                    <h2 class="text-4xl font-black text-[#041e42] mb-10 uppercase tracking-tight">Next Steps</h2>
+                    <div class="flex flex-col">
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-xl text-gray-700 font-medium leading-relaxed">Multi-language support</span>
+                        </div>
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-xl text-gray-700 font-medium leading-relaxed">Expansion to all Canadian Provinces & Territories</span>
+                        </div>
+                        <div class="content-item">
+                            <div class="mt-1 bg-[#041e42] rounded-full p-1 h-5 w-5 flex-shrink-0 flex items-center justify-center">
+                                <svg fill="none" stroke="white" viewBox="0 0 24 24" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-xl text-gray-700 font-medium leading-relaxed">Expand the lawyer directory</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide" id="slide-6">
+                    <div class="h-full flex flex-col justify-center items-center text-center">
+                        <h2 class="text-5xl font-black text-[#041e42] mb-4">Democratizing Access to Equitable Employment</h2>
+                        <div class="w-24 h-1 bg-gold"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flex justify-end gap-3 mt-8">
+                <button id="prevBtn" onclick="changeSlide(-1)" class="btn-nav px-6 py-3 rounded-full font-bold shadow-md">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    Back
+                </button>
+                <button id="nextBtn" onclick="changeSlide(1)" class="btn-nav px-8 py-3 rounded-full bg-[#c5a059] text-[#041e42] font-bold shadow-lg shadow-gold/20">
+                    Next
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let current = 1;
+        const total = 6;
+
+        function updateUI() {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById(`slide-${current}`).classList.add('active');
+
+            document.getElementById('prevBtn').disabled = (current === 1);
+            
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = (current === total);
+            if (current === total) {
+                nextBtn.style.opacity = "0.3";
+                nextBtn.style.cursor = "not-allowed";
+            } else {
+                nextBtn.style.opacity = "1";
+                nextBtn.style.cursor = "pointer";
+            }
+
+            const progress = (current / total) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function changeSlide(dir) {
+            const nextSlide = current + dir;
+            if (nextSlide >= 1 && nextSlide <= total) {
+                current = nextSlide;
+                updateUI();
+            }
+        }
+        
+        updateUI();
+    </script>
+</body>
+</html>
