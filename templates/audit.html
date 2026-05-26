@@ -73,6 +73,8 @@
         }
     }
 
+    const auditConversationId = crypto.randomUUID();
+
     document.getElementById('auditForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = document.getElementById('submitBtn');
@@ -81,13 +83,30 @@
         const resultContainer = document.getElementById('resultContainer');
         const output = document.getElementById('analysisOutput');
 
+        const formData = new FormData(e.target);
+        const clauseText = formData.get('clause_text') || "";
+        const fileInput = formData.get('file');
+        const hasFile = fileInput && fileInput.name && fileInput.size > 0;
+        const promptContent = hasFile ? `[File uploaded: ${fileInput.name}]` : clauseText;
+        const promptMessageId = crypto.randomUUID();
+
+        // Track user prompt
+        if (typeof pendo !== "undefined" && pendo.trackAgent) {
+            pendo.trackAgent("prompt", {
+                agentId: "3OHybHm_m04E3FnI18BAxtu7Qno",
+                conversationId: auditConversationId,
+                messageId: promptMessageId,
+                content: promptContent,
+                suggestedPrompt: false,
+                fileUploaded: hasFile
+            });
+        }
+
         submitBtn.disabled = true;
         btnText.innerText = "Processing Legal Context...";
         spinner.classList.remove('hidden');
-        output.innerText = ""; 
+        output.innerText = "";
         resultContainer.classList.add('hidden');
-
-        const formData = new FormData(e.target);
 
         try {
             const response = await fetch('/api/audit', {
@@ -97,7 +116,18 @@
 
             if (!response.ok) throw new Error("API Failure");
             const data = await response.json();
-            
+
+            // Track agent response
+            if (typeof pendo !== "undefined" && pendo.trackAgent) {
+                pendo.trackAgent("agent_response", {
+                    agentId: "3OHybHm_m04E3FnI18BAxtu7Qno",
+                    conversationId: auditConversationId,
+                    messageId: crypto.randomUUID(),
+                    content: data.answer || "",
+                    modelUsed: "gemini-2.5-flash"
+                });
+            }
+
             output.innerText = data.answer;
             resultContainer.classList.remove('hidden');
             resultContainer.scrollIntoView({ behavior: 'smooth' });
