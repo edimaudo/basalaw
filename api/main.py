@@ -15,7 +15,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 PENDO_TRACK_URL = "https://data.pendo.io/data/track"
-PENDO_INTEGRATION_KEY = "1b338684-bbf3-404e-b52c-e30c472b2a2d"
+PENDO_INTEGRATION_KEY = os.getenv("PENDO_INTEGRATION_KEY", "")
+PENDO_API_KEY = os.getenv("PENDO_API_KEY", "")
+
+if not PENDO_INTEGRATION_KEY:
+    logger.warning("PENDO_INTEGRATION_KEY is not set — server-side tracking will not work")
+if not PENDO_API_KEY:
+    logger.warning("PENDO_API_KEY is not set — client-side Pendo agent will not load")
 
 
 async def pendo_track_server(event: str, visitor_id: str = "system", account_id: str = "system", properties: dict = None):
@@ -48,16 +54,16 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 async def landing(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "pendo_api_key": PENDO_API_KEY})
 
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, __):
-    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+    return templates.TemplateResponse("404.html", {"request": request, "pendo_api_key": PENDO_API_KEY}, status_code=404)
 
 @app.get("/api/audit", response_class=HTMLResponse)
 async def get_qa_page(request: Request):
     """Reasoning: This renders the UI when the user clicks the link."""
-    return templates.TemplateResponse("audit.html", {"request": request})
+    return templates.TemplateResponse("audit.html", {"request": request, "pendo_api_key": PENDO_API_KEY})
 
 @app.post("/api/audit")
 async def handle_audit(file: UploadFile = File(None), clause_text: str = Form(None)):
@@ -104,7 +110,7 @@ async def handle_audit(file: UploadFile = File(None), clause_text: str = Form(No
 
 @app.get("/api/qa", response_class=HTMLResponse)
 async def get_qa_page(request: Request):
-    return templates.TemplateResponse("qa.html", {"request": request})
+    return templates.TemplateResponse("qa.html", {"request": request, "pendo_api_key": PENDO_API_KEY})
 
 @app.post("/api/qa")
 async def handle_qa_logic(question: str = Form(...)):
@@ -129,8 +135,9 @@ async def get_lawyers_page(request: Request):
     ]
     
     return templates.TemplateResponse("lawyers.html", {
-        "request": request, 
-        "specialists": specialists
+        "request": request,
+        "specialists": specialists,
+        "pendo_api_key": PENDO_API_KEY
     })
 
 if __name__ == "__main__":

@@ -103,21 +103,25 @@
             resultContainer.scrollIntoView({ behavior: 'smooth' });
             e.target.reset();
 
-            if (typeof pendo !== 'undefined') {
+            if (typeof pendoReady === 'function' && pendoReady()) {
                 pendo.track('contract_review_completed', {
                     reviewType: document.getElementById('file-upload').classList.contains('hidden') ? 'clause' : 'document',
                     responseLength: (data.answer || '').length,
                     responseSuccess: true
                 });
+            } else {
+                console.warn("Pendo agent not ready — contract_review_completed tracking skipped");
             }
 
         } catch (error) {
             output.innerText = "Critical Error: Could not process document.";
             resultContainer.classList.remove('hidden');
-            if (typeof pendo !== 'undefined') {
+            if (typeof pendoReady === 'function' && pendoReady()) {
                 pendo.track('contract_review_error', {
                     errorMessage: (error.message || 'Unknown error').substring(0, 100)
                 });
+            } else {
+                console.warn("Pendo agent not ready — contract_review_error tracking skipped");
             }
         } finally {
             submitBtn.disabled = false;
