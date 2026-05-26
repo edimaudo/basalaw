@@ -44,31 +44,55 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
     submitBtn.innerText = "Consulting the Employment Service Act...";
     resultContainer.classList.add('hidden');
 
+    const questionText = questionInput.value;
+    const startTime = Date.now();
+
     try {
         const formData = new FormData();
-        formData.append('question', questionInput.value);
+        formData.append('question', questionText);
 
         const response = await fetch('/api/qa', {
             method: 'POST',
-            body: formData 
+            body: formData
         });
 
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
+        const responseTime = Date.now() - startTime;
+
+        // Pendo Track: employment_qa_submitted
+        if (typeof pendo !== 'undefined') {
+            pendo.track("employment_qa_submitted", {
+                questionLength: questionText.length,
+                questionText: questionText.substring(0, 200),
+                responseLength: (data.answer || "").length,
+                responseSuccess: true,
+                responseTime: responseTime
+            });
+        }
 
         // UI State: Success
         resultContainer.classList.remove('hidden');
 
         /* INTEGRATION POINT:
-           We use innerText because the backend is now sending a clean string. 
-           innerText combined with whitespace-pre-wrap ensures the line breaks 
+           We use innerText because the backend is now sending a clean string.
+           innerText combined with whitespace-pre-wrap ensures the line breaks
            look like proper paragraphs.
         */
         answerArea.innerText = data.answer || "No specific guidance found for this inquiry.";
 
     } catch (error) {
         console.error('Error:', error);
+
+        // Pendo Track: employment_qa_error
+        if (typeof pendo !== 'undefined') {
+            pendo.track("employment_qa_error", {
+                errorMessage: (error.message || "Unknown error").substring(0, 100),
+                questionLength: questionText.length
+            });
+        }
+
         resultContainer.classList.remove('hidden');
         answerArea.innerText = "An error occurred while communicating with the system. Please check the console for details.";
     } finally {

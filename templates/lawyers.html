@@ -29,7 +29,9 @@
                     <p class="text-navy font-medium leading-tight">{{ lawyer.firm }}</p>
                 </div>
 
-                <a href="https://lso.ca/directory-of-certified-specialists/labour-law" target="_blank" class="text-xs font-black text-navy uppercase border-b border-navy hover:text-gold hover:border-gold transition pb-1">
+                <a href="https://lso.ca/directory-of-certified-specialists/labour-law" target="_blank"
+                    class="text-xs font-black text-navy uppercase border-b border-navy hover:text-gold hover:border-gold transition pb-1"
+                    onclick="if(typeof pendo!=='undefined'){pendo.track('lawyer_directory_external_link_clicked',{lawyerName:'{{ lawyer.name }}',lawyerFirm:'{{ lawyer.firm }}',lawyerCity:'{{ lawyer.city }}'})}">
                     Verify LSO Standing
                 </a>
             </div>
