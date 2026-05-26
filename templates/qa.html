@@ -31,13 +31,30 @@
 </div>
 
 <script>
+const qaConversationId = crypto.randomUUID();
+
 document.getElementById('qaForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const questionInput = document.getElementById('question');
     const submitBtn = document.getElementById('submitBtn');
     const resultContainer = document.getElementById('resultContainer');
     const answerArea = document.getElementById('answerArea');
+
+    const promptMessageId = crypto.randomUUID();
+    const userContent = questionInput.value;
+
+    // Track user prompt
+    if (typeof pendo !== "undefined" && pendo.trackAgent) {
+        pendo.trackAgent("prompt", {
+            agentId: "3OHybHm_m04E3FnI18BAxtu7Qno",
+            conversationId: qaConversationId,
+            messageId: promptMessageId,
+            content: userContent,
+            suggestedPrompt: false,
+            fileUploaded: false
+        });
+    }
 
     // UI State: Loading
     submitBtn.disabled = true;
@@ -69,6 +86,17 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
                 responseLength: (data.answer || "").length,
                 responseSuccess: true,
                 responseTime: responseTime
+            });
+        }
+
+        // Track agent response
+        if (typeof pendo !== "undefined" && pendo.trackAgent) {
+            pendo.trackAgent("agent_response", {
+                agentId: "3OHybHm_m04E3FnI18BAxtu7Qno",
+                conversationId: qaConversationId,
+                messageId: crypto.randomUUID(),
+                content: data.answer || "",
+                modelUsed: "gemini-2.5-flash"
             });
         }
 
