@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-[#002147] min-h-screen">
+    <div class="max-w-4xl mx-auto py-12 px-6">
+        <h2 class="text-3xl font-bold text-white mb-2">Employment Contract Review</h2>
+        <p class="text-gray-300 mb-8">Analyze your employment contract or specific clauses for ESA compliance.</p>
+        
+        <div class="bg-white p-1 shadow-2xl">
+            <div class="flex border-b border-gray-200 bg-gray-50">
+                <button id="tab-file-btn" onclick="showTab('file')" 
+                    class="py-4 px-8 border-b-2 border-gold font-bold text-navy transition-all">
+                    Full Document
+                </button>
+                <button id="tab-section-btn" onclick="showTab('section')" 
+                    class="py-4 px-8 text-gray-400 hover:text-navy border-b-2 border-transparent transition-all">
+                    Specific Clause
+                </button>
+            </div>
+            
+            <div class="p-8">
+                <form id="auditForm" enctype="multipart/form-data">
+                    <div id="file-upload" class="py-4">
+                        <label class="block text-sm font-bold text-navy mb-4 uppercase">Upload Contract (.pdf, .doc, .docx)</label>
+                        <input type="file" id="contractFile" name="file" accept=".pdf,.doc,.docx" 
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:border-0 file:text-sm file:font-bold file:bg-navy file:text-white hover:file:bg-opacity-90 cursor-pointer">
+                    </div>
+
+                    <div id="section-review" class="py-4 hidden">
+                        <label class="block text-sm font-bold text-navy mb-2 uppercase">Paste Contract Text</label>
+                        <textarea name="clause_text" 
+                            class="w-full h-48 p-4 border border-gray-200 outline-none text-navy focus:border-gold transition" 
+                            placeholder="Paste the specific paragraph or clause here..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="bg-gold text-navy font-bold w-full py-4 flex justify-center items-center gap-2 uppercase tracking-widest">
+                        <span id="btnText">Run Compliance Review</span>
+                        <div id="spinner" class="hidden animate-spin h-5 w-5 border-2 border-navy border-t-transparent rounded-full"></div>
+                    </button>
+                </form>
+
+                <div id="resultContainer" class="hidden mt-10 animate-fade-in">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-navy uppercase text-sm border-l-4 border-gold pl-3">Analysis & Drafts</h3>
+                        <button onclick="copyResults()" class="text-xs font-bold text-navy border border-navy px-3 py-1 hover:bg-navy hover:text-white transition">
+                            COPY ALL
+                        </button>
+                    </div>
+                    <div id="analysisOutput" class="p-6 bg-gray-50 text-navy leading-relaxed whitespace-pre-wrap border border-gray-100 italic"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTab(tab) {
+        const fileDiv = document.getElementById('file-upload');
+        const sectionDiv = document.getElementById('section-review');
+        const fileBtn = document.getElementById('tab-file-btn');
+        const sectionBtn = document.getElementById('tab-section-btn');
+
+        if (tab === 'file') {
+            fileDiv.classList.remove('hidden');
+            sectionDiv.classList.add('hidden');
+            fileBtn.className = "py-4 px-8 border-b-2 border-gold font-bold text-navy transition-all";
+            sectionBtn.className = "py-4 px-8 text-gray-400 hover:text-navy border-b-2 border-transparent transition-all";
+        } else {
+            fileDiv.classList.add('hidden');
+            sectionDiv.classList.remove('hidden');
+            sectionBtn.className = "py-4 px-8 border-b-2 border-gold font-bold text-navy transition-all";
+            fileBtn.className = "py-4 px-8 text-gray-400 hover:text-navy border-b-2 border-transparent transition-all";
+        }
+    }
+
+    document.getElementById('auditForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const spinner = document.getElementById('spinner');
+        const resultContainer = document.getElementById('resultContainer');
+        const output = document.getElementById('analysisOutput');
+
+        submitBtn.disabled = true;
+        btnText.innerText = "Processing Legal Context...";
+        spinner.classList.remove('hidden');
+        output.innerText = ""; 
+        resultContainer.classList.add('hidden');
+
+        const formData = new FormData(e.target);
+
+        try {
+            const response = await fetch('/api/audit', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error("API Failure");
+            const data = await response.json();
+            
+            output.innerText = data.answer;
+            resultContainer.classList.remove('hidden');
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+            e.target.reset();
+
+        } catch (error) {
+            output.innerText = "Critical Error: Could not process document.";
+            resultContainer.classList.remove('hidden');
+        } finally {
+            submitBtn.disabled = false;
+            btnText.innerText = "Run Compliance Review";
+            spinner.classList.add('hidden');
+        }
+    });
+
+    function copyResults() {
+        const text = document.getElementById('analysisOutput').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Review report copied to clipboard.");
+        });
+    }
+</script>
+
+<style>
+    
+    .border-gold { border-color: #D4AF37 !important; }
+    .bg-gold { background-color: #D4AF37 !important; }
+    .text-navy { color: #002147; }
+    .bg-navy { background-color: #002147; }
+    
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
+</style>
+{% endblock %}
