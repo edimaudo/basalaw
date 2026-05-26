@@ -31,7 +31,7 @@
 
                 <a href="https://lso.ca/directory-of-certified-specialists/labour-law" target="_blank"
                     class="text-xs font-black text-navy uppercase border-b border-navy hover:text-gold hover:border-gold transition pb-1"
-                    onclick="if(typeof pendo!=='undefined'){pendo.track('lawyer_directory_external_link_clicked',{lawyerName:'{{ lawyer.name }}',lawyerFirm:'{{ lawyer.firm }}',lawyerCity:'{{ lawyer.city }}'})}">
+                    onclick="if(typeof pendoReady==='function'&&pendoReady()){pendo.track('lawyer_directory_external_link_clicked',{lawyerName:'{{ lawyer.name }}',lawyerFirm:'{{ lawyer.firm }}',lawyerCity:'{{ lawyer.city }}'})}else{console.warn('Pendo agent not ready — lawyer link tracking skipped')}">
                     Verify LSO Standing
                 </a>
             </div>

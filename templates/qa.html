@@ -54,6 +54,8 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
             suggestedPrompt: false,
             fileUploaded: false
         });
+    } else {
+        console.warn("Pendo agent not loaded — prompt tracking skipped");
     }
 
     // UI State: Loading
@@ -79,7 +81,7 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
         const responseTime = Date.now() - startTime;
 
         // Pendo Track: employment_qa_submitted
-        if (typeof pendo !== 'undefined') {
+        if (typeof pendoReady === 'function' && pendoReady()) {
             pendo.track("employment_qa_submitted", {
                 questionLength: questionText.length,
                 questionText: questionText.substring(0, 200),
@@ -87,10 +89,12 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
                 responseSuccess: true,
                 responseTime: responseTime
             });
+        } else {
+            console.warn("Pendo agent not ready — employment_qa_submitted tracking skipped");
         }
 
         // Track agent response
-        if (typeof pendo !== "undefined" && pendo.trackAgent) {
+        if (typeof pendoReady === 'function' && pendoReady() && pendo.trackAgent) {
             pendo.trackAgent("agent_response", {
                 agentId: "3OHybHm_m04E3FnI18BAxtu7Qno",
                 conversationId: qaConversationId,
@@ -98,6 +102,8 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
                 content: data.answer || "",
                 modelUsed: "gemini-2.5-flash"
             });
+        } else {
+            console.warn("Pendo agent not ready — agent_response tracking skipped");
         }
 
         // UI State: Success
@@ -114,11 +120,13 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
         console.error('Error:', error);
 
         // Pendo Track: employment_qa_error
-        if (typeof pendo !== 'undefined') {
+        if (typeof pendoReady === 'function' && pendoReady()) {
             pendo.track("employment_qa_error", {
                 errorMessage: (error.message || "Unknown error").substring(0, 100),
                 questionLength: questionText.length
             });
+        } else {
+            console.warn("Pendo agent not ready — employment_qa_error tracking skipped");
         }
 
         resultContainer.classList.remove('hidden');
