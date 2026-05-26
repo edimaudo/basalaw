@@ -103,9 +103,22 @@
             resultContainer.scrollIntoView({ behavior: 'smooth' });
             e.target.reset();
 
+            if (typeof pendo !== 'undefined') {
+                pendo.track('contract_review_completed', {
+                    reviewType: document.getElementById('file-upload').classList.contains('hidden') ? 'clause' : 'document',
+                    responseLength: (data.answer || '').length,
+                    responseSuccess: true
+                });
+            }
+
         } catch (error) {
             output.innerText = "Critical Error: Could not process document.";
             resultContainer.classList.remove('hidden');
+            if (typeof pendo !== 'undefined') {
+                pendo.track('contract_review_error', {
+                    errorMessage: (error.message || 'Unknown error').substring(0, 100)
+                });
+            }
         } finally {
             submitBtn.disabled = false;
             btnText.innerText = "Run Compliance Review";

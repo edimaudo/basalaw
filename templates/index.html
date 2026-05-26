@@ -31,7 +31,14 @@
 
     pendo.initialize({
         visitor: {
-            id: ''
+            id: localStorage.getItem('basalaw_vid') || (function() {
+                var vid = 'anon-' + crypto.randomUUID();
+                localStorage.setItem('basalaw_vid', vid);
+                return vid;
+            })()
+        },
+        account: {
+            id: 'basalaw-public'
         }
     });
     </script>
