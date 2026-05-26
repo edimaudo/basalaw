@@ -1,0 +1,33 @@
+basalaw testing
+
+### bad text
+"RECIPE FOR APPLE PIE: 1. Preheat oven to 375. 2. Mix flour and butter. 3. Bake for 45 minutes. WARNING: This pie is hot."
+
+### q&A
+I'm applying for a job; do they have to tell me the salary range under the 2026 rules?"
+
+
+
+
+## Clauses for testing
+Clause 1: The "Non-Compete" (The 2021 Prohibition Test)
+
+"RESTRICTIVE COVENANT: The Employee agrees that for a period of twelve (12) months following the Cessation Date, the Employee shall not, directly or indirectly, within the Greater Toronto Area, engage in any business, profession, or activity that competes with the Business of the Employer."
+
+Note: Unless this is a "C-Suite" executive, this is 100% void in Ontario.
+
+Clause 2: The "Averaging Agreement" (Overtime Test)
+
+"OVERTIME AVERAGING: The Employee hereby agrees that for the purposes of calculating overtime pay, their hours of work shall be averaged over a period of four (4) separate and non-overlapping weeks. Overtime (1.5x) will only be paid for hours exceeding 176 hours in that four-week block."
+
+Clause 3: The "Probationary" Clause
+
+"PROBATION: The first six (6) months of employment shall be a probationary period. At any time during this period, the Employer may terminate employment without notice or pay in lieu thereof."
+
+Note: ESA notice kicks in after 3 months. A 6-month "no-pay" probation is illegal.
+
+Reject Case 2: The "Non-Contract" (Validation Test)
+
+Text to paste:
+
+"RECIPE FOR APPLE PIE: 1. Preheat oven to 375. 2. Mix flour and butter. 3. Bake for 45 minutes. WARNING: This pie is hot."
