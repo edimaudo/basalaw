@@ -108,6 +108,24 @@
         output.innerText = "";
         resultContainer.classList.add('hidden');
 
+        const formData = new FormData(e.target);
+        const fileInput = document.getElementById('contractFile');
+        const clauseTextArea = e.target.querySelector('textarea[name="clause_text"]');
+        const file = fileInput.files[0];
+        const clauseText = clauseTextArea ? clauseTextArea.value : "";
+        const reviewType = file ? "file_upload" : "clause_text";
+        const fileType = file ? file.name.split('.').pop().toLowerCase() : null;
+        const startTime = Date.now();
+
+        // Pendo Track: contract_file_uploaded
+        if (file && typeof pendo !== 'undefined') {
+            pendo.track("contract_file_uploaded", {
+                fileName: file.name.substring(0, 100),
+                fileType: fileType,
+                fileSize: file.size
+            });
+        }
+
         try {
             const response = await fetch('/api/audit', {
                 method: 'POST',
@@ -116,15 +134,18 @@
 
             if (!response.ok) throw new Error("API Failure");
             const data = await response.json();
+            const responseTime = Date.now() - startTime;
 
-            // Track agent response
-            if (typeof pendo !== "undefined" && pendo.trackAgent) {
-                pendo.trackAgent("agent_response", {
-                    agentId: "3OHybHm_m04E3FnI18BAxtu7Qno",
-                    conversationId: auditConversationId,
-                    messageId: crypto.randomUUID(),
-                    content: data.answer || "",
-                    modelUsed: "gemini-2.5-flash"
+            // Pendo Track: contract_review_completed
+            if (typeof pendo !== 'undefined') {
+                pendo.track("contract_review_completed", {
+                    reviewType: reviewType,
+                    fileType: fileType,
+                    fileSize: file ? file.size : null,
+                    clauseTextLength: clauseText.length,
+                    responseLength: (data.answer || "").length,
+                    responseTime: responseTime,
+                    responseSuccess: true
                 });
             }
 
@@ -134,6 +155,15 @@
             e.target.reset();
 
         } catch (error) {
+            // Pendo Track: contract_review_error
+            if (typeof pendo !== 'undefined') {
+                pendo.track("contract_review_error", {
+                    errorMessage: (error.message || "Unknown error").substring(0, 100),
+                    reviewType: reviewType,
+                    fileType: fileType
+                });
+            }
+
             output.innerText = "Critical Error: Could not process document.";
             resultContainer.classList.remove('hidden');
         } finally {
@@ -146,6 +176,12 @@
     function copyResults() {
         const text = document.getElementById('analysisOutput').innerText;
         navigator.clipboard.writeText(text).then(() => {
+            // Pendo Track: contract_review_results_copied
+            if (typeof pendo !== 'undefined') {
+                pendo.track("contract_review_results_copied", {
+                    resultsLength: text.length
+                });
+            }
             alert("Review report copied to clipboard.");
         });
     }

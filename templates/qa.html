@@ -61,9 +61,12 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
     submitBtn.innerText = "Consulting the Employment Service Act...";
     resultContainer.classList.add('hidden');
 
+    const questionText = questionInput.value;
+    const startTime = Date.now();
+
     try {
         const formData = new FormData();
-        formData.append('question', userContent);
+        formData.append('question', questionText);
 
         const response = await fetch('/api/qa', {
             method: 'POST',
@@ -73,6 +76,18 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
+        const responseTime = Date.now() - startTime;
+
+        // Pendo Track: employment_qa_submitted
+        if (typeof pendo !== 'undefined') {
+            pendo.track("employment_qa_submitted", {
+                questionLength: questionText.length,
+                questionText: questionText.substring(0, 200),
+                responseLength: (data.answer || "").length,
+                responseSuccess: true,
+                responseTime: responseTime
+            });
+        }
 
         // Track agent response
         if (typeof pendo !== "undefined" && pendo.trackAgent) {
@@ -97,6 +112,15 @@ document.getElementById('qaForm').addEventListener('submit', async (e) => {
 
     } catch (error) {
         console.error('Error:', error);
+
+        // Pendo Track: employment_qa_error
+        if (typeof pendo !== 'undefined') {
+            pendo.track("employment_qa_error", {
+                errorMessage: (error.message || "Unknown error").substring(0, 100),
+                questionLength: questionText.length
+            });
+        }
+
         resultContainer.classList.remove('hidden');
         answerArea.innerText = "An error occurred while communicating with the system. Please check the console for details.";
     } finally {
