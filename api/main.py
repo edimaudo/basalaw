@@ -8,6 +8,39 @@ from .agents import ask_esa_lawyer
 import shutil
 import os
 import uvicorn
+import httpx
+import time
+import logging
+
+logger = logging.getLogger(__name__)
+
+PENDO_TRACK_URL = "https://data.pendo.io/data/track"
+PENDO_INTEGRATION_KEY = "1b338684-bbf3-404e-b52c-e30c472b2a2d"
+
+
+async def pendo_track_server(event: str, visitor_id: str = "system", account_id: str = "system", properties: dict = None):
+    """Send a server-side Pendo track event."""
+    try:
+        payload = {
+            "type": "track",
+            "event": event,
+            "visitorId": visitor_id,
+            "accountId": account_id,
+            "timestamp": int(time.time() * 1000),
+            "properties": properties or {}
+        }
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                PENDO_TRACK_URL,
+                json=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "x-pendo-integration-key": PENDO_INTEGRATION_KEY
+                },
+                timeout=5.0
+            )
+    except Exception as e:
+        logger.warning(f"Pendo track event failed: {e}")
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -35,6 +68,14 @@ async def handle_audit(file: UploadFile = File(None), clause_text: str = Form(No
         file_bytes = await file.read()
         context = extract_text_from_file(file_bytes, file.filename)
         if context == "ERROR_IMAGE_ONLY_PDF":
+            # Pendo Track: scanned_document_detected
+            await pendo_track_server(
+                event="scanned_document_detected",
+                properties={
+                    "fileName": file.filename[:100] if file.filename else "unknown",
+                    "fileSize": len(file_bytes)
+                }
+            )
             return {
                 "answer": (
                     "SCANNED DOCUMENT DETECTED\n\n"
