@@ -89,6 +89,21 @@
 
         const formData = new FormData(e.target);
 
+        // Track file upload metadata
+        const fileInput = document.getElementById('contractFile');
+        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+            const uploadedFile = fileInput.files[0];
+            if (typeof pendoReady === 'function' && pendoReady()) {
+                pendo.track('contract_file_uploaded', {
+                    fileName: uploadedFile.name.substring(0, 100),
+                    fileType: uploadedFile.name.split('.').pop().toLowerCase(),
+                    fileSize: uploadedFile.size
+                });
+            } else {
+                console.warn("Pendo agent not ready — contract_file_uploaded tracking skipped");
+            }
+        }
+
         try {
             const response = await fetch('/api/audit', {
                 method: 'POST',
@@ -133,6 +148,13 @@
     function copyResults() {
         const text = document.getElementById('analysisOutput').innerText;
         navigator.clipboard.writeText(text).then(() => {
+            if (typeof pendoReady === 'function' && pendoReady()) {
+                pendo.track('contract_review_results_copied', {
+                    resultsLength: text.length
+                });
+            } else {
+                console.warn("Pendo agent not ready — contract_review_results_copied tracking skipped");
+            }
             alert("Review report copied to clipboard.");
         });
     }
